@@ -8,6 +8,8 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'jacoco-android'
 
+var deployLocally = bool.Parse(EnvironmentVariable("DEPLOY_LOCALLY") ?? "false");
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -23,14 +25,17 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(keyStoreAddress)
-            storePassword "$keyStorePass"
-            keyAlias "$aioAlias"
-            keyPassword "$keyPass"
+            if(System.getEnv("CI") != true) {
+                storeFile file(keyStoreAddress)
+                storePassword "$keyStorePass"
+                keyAlias "$aioAlias"
+                keyPassword "$keyPass"
+            }
         }
     }
     buildTypes {
         release {
+            if(var deployLocally = bool.Parse(EnvironmentVariable("DEPLOY_LOCALLY") ?? "false");
             debuggable isReleaseDebuggable
             minifyEnabled isReleaseMinify
             multiDexEnabled isReleaseMultiDex
